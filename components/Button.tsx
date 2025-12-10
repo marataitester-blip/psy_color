@@ -16,11 +16,11 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props 
 }) => {
-  const baseStyles = "font-cinzel font-bold text-sm uppercase tracking-widest py-4 px-8 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden";
+  const baseStyles = "font-cinzel text-xs uppercase tracking-[0.25em] py-4 px-8 transition-all duration-500 flex items-center justify-center gap-3 relative overflow-hidden group border";
   
   const variants = {
-    primary: "bg-gradient-to-br from-accent-gold to-accent-gold-dim text-bg-primary shadow-[0_0_20px_rgba(199,168,123,0.3)] hover:shadow-[0_0_35px_rgba(199,168,123,0.5)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:hover:translate-y-0 disabled:shadow-none",
-    secondary: "bg-transparent border border-accent-gold/30 text-accent-gold hover:bg-accent-gold/10 disabled:opacity-50"
+    primary: "border-accent-gold bg-accent-gold/10 text-accent-gold hover:bg-accent-gold hover:text-bg-primary shadow-[0_0_15px_rgba(199,168,123,0.1)] hover:shadow-[0_0_30px_rgba(199,168,123,0.4)] disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-accent-gold",
+    secondary: "border-white/10 text-text-secondary hover:border-accent-gold/40 hover:text-accent-gold bg-transparent disabled:opacity-30"
   };
 
   return (
