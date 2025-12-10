@@ -44,6 +44,7 @@ const App: React.FC = () => {
       }, 100);
 
     } catch (err: any) {
+      console.error(err);
       setError(err.message || t.errorGeneric);
       setStatus(AnalysisStatus.ERROR);
     }
@@ -61,8 +62,8 @@ const App: React.FC = () => {
       
       {/* Background Ambience */}
       <div className="fixed inset-0 z-0 pointer-events-none bg-black">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-accent-gold/5 blur-[150px] rounded-full opacity-30" />
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-accent-gold/5 blur-[120px] rounded-full opacity-20" />
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-15"></div>
       </div>
 
       {/* Main Container */}
@@ -82,27 +83,27 @@ const App: React.FC = () => {
           </div>
 
           {/* Header */}
-          <header className="text-center space-y-6 mb-16 mt-16 animate-fade-in">
+          <header className="text-center space-y-8 mb-12 mt-12 animate-fade-in flex-none">
             <div className="flex items-center justify-center gap-4 text-accent-gold/60">
-              <div className="h-px w-16 bg-gradient-to-r from-transparent to-accent-gold"></div>
-              <Star className="w-4 h-4 text-accent-gold" fill="currentColor" />
-              <div className="h-px w-16 bg-gradient-to-l from-transparent to-accent-gold"></div>
+              <div className="h-px w-24 bg-gradient-to-r from-transparent to-accent-gold"></div>
+              <Star className="w-5 h-5 text-accent-gold" fill="currentColor" />
+              <div className="h-px w-24 bg-gradient-to-l from-transparent to-accent-gold"></div>
             </div>
             
-            <h1 className="font-cinzel text-4xl md:text-7xl text-accent-gold font-normal tracking-[0.1em] uppercase drop-shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+            <h1 className="font-cinzel text-4xl md:text-6xl text-accent-gold font-normal tracking-[0.15em] uppercase drop-shadow-[0_0_25px_rgba(212,175,55,0.25)]">
               {t.title}
             </h1>
             
-            <p className="font-cormorant text-xl md:text-2xl text-text-secondary italic max-w-2xl mx-auto leading-relaxed">
+            <p className="font-cormorant text-xl md:text-2xl text-text-secondary italic max-w-2xl mx-auto leading-relaxed border-b border-accent-gold/10 pb-8">
               {t.subtitle}
             </p>
           </header>
 
           {/* Input Section */}
-          <section className={`flex-1 flex flex-col items-center transition-all duration-700 ${result ? 'hidden' : 'block'}`}>
-            <div className="w-full max-w-3xl relative group border-t border-b border-accent-gold/30 py-10 bg-transparent">
+          <section className={`flex-1 flex flex-col items-center justify-center transition-all duration-700 ${result ? 'hidden' : 'block'}`}>
+            <div className="w-full max-w-3xl relative">
               
-              <label htmlFor="userInput" className="block text-center font-cinzel text-accent-gold text-sm tracking-[0.3em] uppercase mb-8">
+              <label htmlFor="userInput" className="block text-center font-cinzel text-accent-gold text-xs tracking-[0.3em] uppercase mb-10 opacity-80">
                 {t.inputLabel}
               </label>
 
@@ -112,11 +113,11 @@ const App: React.FC = () => {
                 onChange={(e) => setUserInput(e.target.value)}
                 disabled={status === AnalysisStatus.ANALYZING_TEXT || status === AnalysisStatus.GENERATING_IMAGE}
                 placeholder={t.placeholder}
-                className="w-full min-h-[180px] bg-transparent border-none text-xl md:text-2xl text-center font-cormorant text-text-primary placeholder:text-text-secondary/30 focus:outline-none focus:ring-0 transition-all resize-none py-4 px-4 leading-loose"
+                className="w-full min-h-[160px] bg-transparent border-b border-accent-gold/20 text-xl md:text-2xl text-center font-cormorant text-text-primary placeholder:text-text-secondary/20 focus:outline-none focus:border-accent-gold/60 transition-all resize-none py-6 px-4 leading-loose"
               />
             </div>
 
-            <div className="mt-12 flex flex-col md:flex-row gap-6 w-full max-w-xs">
+            <div className="mt-16 flex flex-col md:flex-row gap-6 w-full max-w-xs">
               <Button 
                 onClick={handleAnalyze} 
                 isLoading={status === AnalysisStatus.ANALYZING_TEXT || status === AnalysisStatus.GENERATING_IMAGE}
@@ -130,16 +131,17 @@ const App: React.FC = () => {
             </div>
             
             {error && (
-              <div className="mt-8 text-red-400 font-cormorant italic text-center text-lg">
-                {error}
+              <div className="mt-12 p-4 border border-red-900/50 bg-red-950/20 rounded text-center animate-fade-in max-w-xl">
+                <div className="text-red-400 font-cinzel text-sm uppercase tracking-widest mb-2">Error</div>
+                <div className="text-red-200 font-cormorant text-lg italic">{error}</div>
               </div>
             )}
           </section>
 
           {/* Result Section */}
-          <div ref={resultRef} className="w-full max-w-6xl mx-auto">
+          <div ref={resultRef} className={`w-full flex-1 flex flex-col justify-center ${result ? 'flex' : 'hidden'}`}>
             {result && status === AnalysisStatus.COMPLETE && (
-               <div className="space-y-12">
+               <div className="space-y-16 animate-fade-in w-full">
                   <div className="flex justify-center">
                     <Button 
                       variant="secondary" 
@@ -164,13 +166,13 @@ const App: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <footer className="mt-auto pt-20 pb-8 text-center">
-             <div className="flex items-center justify-center gap-4 opacity-50 mb-6">
+          <footer className="mt-auto pt-24 pb-8 text-center flex-none">
+             <div className="flex items-center justify-center gap-4 opacity-30 mb-6">
               <div className="h-px w-12 bg-accent-gold"></div>
               <div className="w-1.5 h-1.5 rotate-45 bg-accent-gold"></div>
               <div className="h-px w-12 bg-accent-gold"></div>
              </div>
-             <p className="font-cinzel text-[10px] tracking-[0.3em] text-accent-gold/50 uppercase">
+             <p className="font-cinzel text-[10px] tracking-[0.3em] text-accent-gold/40 uppercase">
                 {t.footer}
              </p>
           </footer>
