@@ -64,14 +64,15 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background Ambience */}
-      <div className="fixed inset-0 z-[-1] bg-bg-primary">
+    <div className="min-h-screen relative overflow-hidden text-text-primary">
+      {/* Background Ambience - Explicitly z-0 */}
+      <div className="fixed inset-0 z-0 bg-bg-primary pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-accent-gold/5 blur-[150px] rounded-full" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 blur-[150px] rounded-full" />
       </div>
 
-      <div className="container mx-auto px-4 py-12 md:py-20 max-w-5xl relative">
+      {/* Main Content - Explicitly z-10 to sit above background */}
+      <div className="relative z-10 container mx-auto px-4 py-12 md:py-20 max-w-5xl">
         
         {/* Language Switcher */}
         <div className="absolute top-4 right-4 md:top-8 md:right-8 z-50">
