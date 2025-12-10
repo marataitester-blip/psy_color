@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { analyzeText, generateTarotImage } from './services/geminiService';
+import { analyzeFate } from './services/geminiService'; // Service is now a proxy to /api/analyze
 import { FullAnalysisResult, AnalysisStatus, Language } from './types';
 import { translations } from './constants/translations';
 import { Button } from './components/Button';
@@ -23,20 +23,16 @@ const App: React.FC = () => {
   const handleAnalyze = async () => {
     if (!userInput.trim()) return;
 
-    setStatus(AnalysisStatus.ANALYZING_TEXT);
+    // We now have a unified process on the backend, so we combine the status states visually
+    setStatus(AnalysisStatus.ANALYZING_TEXT); 
     setError(null);
     setResult(null);
 
     try {
-      const analysis = await analyzeText(userInput, language);
-      setStatus(AnalysisStatus.GENERATING_IMAGE);
-      const imageUrl = await generateTarotImage(analysis.image_prompt);
+      // The single backend call returns both text and image
+      const analysis = await analyzeFate(userInput, language);
 
-      setResult({
-        ...analysis,
-        image_url: imageUrl
-      });
-      
+      setResult(analysis);
       setStatus(AnalysisStatus.COMPLETE);
 
       setTimeout(() => {
@@ -55,6 +51,13 @@ const App: React.FC = () => {
     setResult(null);
     setStatus(AnalysisStatus.IDLE);
     setError(null);
+  };
+
+  // Helper to determine button text based on status
+  const getLoadingText = () => {
+    // Since it's one atomic operation now, we can just show a "Consulting..." message
+    // or alternate if we had streaming. For now, we use the "Analyzing" text.
+    return t.analyzing; 
   };
 
   return (
@@ -83,7 +86,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Header */}
-          <header className="text-center space-y-8 mb-12 mt-12 animate-fade-in flex-none">
+          <header className="flex-none text-center space-y-8 mb-12 mt-12 animate-fade-in">
             <div className="flex items-center justify-center gap-4 text-accent-gold/60">
               <div className="h-px w-24 bg-gradient-to-r from-transparent to-accent-gold"></div>
               <Star className="w-5 h-5 text-accent-gold" fill="currentColor" />
@@ -111,17 +114,17 @@ const App: React.FC = () => {
                 id="userInput"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                disabled={status === AnalysisStatus.ANALYZING_TEXT || status === AnalysisStatus.GENERATING_IMAGE}
+                disabled={status === AnalysisStatus.ANALYZING_TEXT}
                 placeholder={t.placeholder}
                 className="w-full min-h-[160px] bg-transparent border-b border-accent-gold/20 text-xl md:text-2xl text-center font-cormorant text-text-primary placeholder:text-text-secondary/20 focus:outline-none focus:border-accent-gold/60 transition-all resize-none py-6 px-4 leading-loose"
               />
             </div>
 
-            <div className="mt-16 flex flex-col md:flex-row gap-6 w-full max-w-xs">
+            <div className="mt-16 flex flex-col md:flex-row gap-6 w-full max-w-xs justify-center">
               <Button 
                 onClick={handleAnalyze} 
-                isLoading={status === AnalysisStatus.ANALYZING_TEXT || status === AnalysisStatus.GENERATING_IMAGE}
-                loadingText={status === AnalysisStatus.ANALYZING_TEXT ? t.analyzing : t.generating}
+                isLoading={status === AnalysisStatus.ANALYZING_TEXT}
+                loadingText={t.analyzing}
                 disabled={!userInput.trim()}
                 className="flex-1 w-full border-accent-gold text-accent-gold hover:bg-accent-gold hover:text-black"
               >
@@ -139,7 +142,7 @@ const App: React.FC = () => {
           </section>
 
           {/* Result Section */}
-          <div ref={resultRef} className={`w-full flex-1 flex flex-col justify-center ${result ? 'flex' : 'hidden'}`}>
+          <div ref={resultRef} className={`w-full flex-1 flex flex-col items-center justify-center ${result ? 'flex' : 'hidden'}`}>
             {result && status === AnalysisStatus.COMPLETE && (
                <div className="space-y-16 animate-fade-in w-full">
                   <div className="flex justify-center">
@@ -166,7 +169,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <footer className="mt-auto pt-24 pb-8 text-center flex-none">
+          <footer className="flex-none mt-auto pt-24 pb-8 text-center">
              <div className="flex items-center justify-center gap-4 opacity-30 mb-6">
               <div className="h-px w-12 bg-accent-gold"></div>
               <div className="w-1.5 h-1.5 rotate-45 bg-accent-gold"></div>
